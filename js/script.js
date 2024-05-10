@@ -2,16 +2,42 @@ let valorDisplay = '';
 
 function adicionarAoDisplay(valor) {
     valorDisplay += valor;
-    document.getElementById('display').value = valorDisplay;
+    atualizarDisplay();
 }
 
 function limparDisplay() {
     valorDisplay = '';
-    document.getElementById('display').value = valorDisplay;
+    atualizarDisplay();
 }
 
 function calcularResultado() {
-    let resultado = eval(valorDisplay);
-    document.getElementById('display').value = resultado;
-    valorDisplay = resultado.toString();
+    if (valorDisplay === '') {
+        document.getElementById('display').value = 'Zerado';
+        return;
+    }
+
+    try {
+        let resultado = evaluateExpression(valorDisplay);
+        document.getElementById('display').value = resultado;
+        valorDisplay = resultado.toString();
+    } catch (error) {
+        document.getElementById('display').value = 'Erro';
+        console.error('Erro ao calcular resultado:', error);
+    }
+}
+
+function evaluateExpression(expression) {
+    if (!isSafeExpression(expression)) {
+        throw new Error('Expressão inválida');
+    }
+
+    return eval(expression);
+}
+
+function isSafeExpression(expression) {
+    return /^[0-9+\-*/().\s]+$/.test(expression);
+}
+
+function atualizarDisplay() {
+    document.getElementById('display').value = valorDisplay;
 }
